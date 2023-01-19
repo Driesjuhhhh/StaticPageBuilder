@@ -7,4 +7,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="EKO_ContentParser" Version="1.0.0-2022-05-14T103715" />
+  </ItemGroup>
+
 </Project>
