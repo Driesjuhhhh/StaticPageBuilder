@@ -6,7 +6,7 @@ internal static class PathChecker
 {
     private const string CONFIG_FILE_NAME = "page_builder.json";
 
-    public static PageBuilderConfig? CheckAndConvertArgs(string[] args)
+    public static PageBuilderConfig[]? CheckAndConvertArgs(string[] args)
     {
         if (args.Length > 0)
         {
@@ -66,7 +66,7 @@ internal static class PathChecker
             {
                 try
                 {
-                    var config = JsonSerializer.Deserialize<PageBuilderConfig>(jsonFile);
+                    var config = JsonSerializer.Deserialize<PageBuilderConfig[]>(jsonFile);
 
                     if (config is null)
                     {
@@ -76,10 +76,22 @@ internal static class PathChecker
 
                     filePath = GetBaseProjectDirectory(filePath);
 
-                    config.InputPath = Path.Combine(filePath, FixPathName(config.InputPath));
-                    config.OutputPath = Path.Combine(filePath, FixPathName(config.OutputPath));
-                    config.TemplatePath = Path.Combine(filePath, FixPathName(config.TemplatePath));
-                    config.ImagesDirectoryPath = Path.Combine(filePath, FixPathName(config.ImagesDirectoryPath));
+                    foreach (var item in config)
+                    {
+                        item.InputPath = Path.Combine(filePath, FixPathName(item.InputPath));
+                        item.OutputPath = Path.Combine(filePath, FixPathName(item.OutputPath));
+                        item.TemplatePath = Path.Combine(filePath, FixPathName(item.TemplatePath));
+
+                        //if (!string.IsNullOrWhiteSpace(item.ImagesDirectoryPath))
+                        //{
+                        //    item.ImagesDirectoryPath = Path.Combine(filePath, FixPathName(item.ImagesDirectoryPath));
+                        //}
+
+                        if (!string.IsNullOrWhiteSpace(item.WidgetPath))
+                        {
+                            item.WidgetPath = Path.Combine(filePath, FixPathName(item.WidgetPath));
+                        }
+                    }
 
                     return config;
                 }
