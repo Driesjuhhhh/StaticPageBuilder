@@ -72,6 +72,22 @@ foreach (var config in configs.Where(c => !c.HasContent))
 {
     var paged = Helpers.PageList(pages, 5);
 
+    var indexWidgets = new StringBuilder(File.ReadAllText(config.TemplatePath));
+
+    foreach (var page in paged[0])
+    {
+        var widget = File.ReadAllText(config.WidgetPath!);
+
+        widget = widget
+            .Replace("@#IMAGESDIRECTORYPATH#@", config.ImagesDirectoryPath)
+            .Replace("@#COVER#@", page.PageVars.Find(x => x.Name == "cover")?.Value ?? "code.jpg")
+            .Replace("@#TITLE#@", page.PageVars.Find(x => x.Name == "title")?.Value ?? "No title")
+            .Replace("@#DESCRIPTION#@", page.PageVars.Find(x => x.Name == "description")?.Value ?? "No description")
+            .Replace("@#FILENAME#@", page.MetaData.FileName);
+
+        indexWidgets.Append(widget);
+    }
+
     for (int i = 0; i < paged.Count; i++)
     {
         var builder = new StringBuilder(File.ReadAllText(config.TemplatePath));
@@ -94,8 +110,34 @@ foreach (var config in configs.Where(c => !c.HasContent))
 
         builder.Replace("@#WIDGETS#@", widgetList.ToString());
 
+        var paging = new StringBuilder(File.ReadAllText(config.PagingWidgetPath!));
+
+        paging.Replace("@#MAX#@", paged.Count.ToString());
+        paging.Replace("@#CURRENT#@", (i + 1).ToString());
+
+        if (i == paged.Count - 1)
+        {
+            paging.Replace("@#NEXT#@", (i + 1).ToString());
+        }
+        else
+        {
+            paging.Replace("@#NEXT#@", (i + 2).ToString());
+        }
+
+        if (i == 0)
+        {
+            paging.Replace("@#PREVIOUS#@", (i + 1).ToString());
+        }
+        else
+        {
+            paging.Replace("@#PREVIOUS#@", i.ToString());
+        }
+
+        builder.Replace("@#PAGING#@", paging.ToString());
+
         var t = builder.ToString();
         var b = widgetList.ToString();
+        var p = paging.ToString();
 
         File.WriteAllText(config.OutputPath + $"{i + 1}.html", builder.ToString());
     }

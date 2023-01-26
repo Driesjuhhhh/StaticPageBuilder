@@ -91,6 +91,11 @@ internal static class PathChecker
                         {
                             item.WidgetPath = Path.Combine(filePath, FixPathName(item.WidgetPath));
                         }
+
+                        if (!string.IsNullOrWhiteSpace(item.PagingWidgetPath))
+                        {
+                            item.PagingWidgetPath = Path.Combine(filePath, FixPathName(item.PagingWidgetPath));
+                        }
                     }
 
                     return config;
