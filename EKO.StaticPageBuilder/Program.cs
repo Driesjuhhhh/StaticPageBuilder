@@ -1,147 +1,67 @@
-﻿using EKO.StaticPageBuilder;
+﻿using EKO.StaticPageBuilder.Builders;
+using EKO.StaticPageBuilder.Helpers;
 using EKO_ContentParser;
-using System.Text;
 
-var path = "D:\\Code\\Sites\\ekozf.github.io";
+var path = @"D:\Code\Sites\ekozf.github.io";
 
-var configs = PathChecker.CheckAndConvertArgs(new string[] { path });
+var configFile = ConfigHelper.LocateConfigFile(path);
 
-if (configs is null) return;
-
-var pages = new List<Page>();
-
-foreach (var config in configs.Where(c => c.HasContent))
+if (string.IsNullOrWhiteSpace(configFile))
 {
-    var pathsAreValid = PathChecker.IsPathValid(config.InputPath) &&
-                        PathChecker.IsPathValid(config.OutputPath) &&
-                        PathChecker.IsPathValid(config.TemplatePath);
-
-    if (pathsAreValid)
-    {
-        var generator = MarkdownParser.GetParser();
-
-        var results = generator
-                        .UseFileOrDirectory(config.InputPath)
-                        .ReadContents()
-                        .ParseMarkdown()
-                        .ParseYaml()
-                        .SaveFilesTo(config.OutputPath)
-                        .GetObjects();
-
-        if (results != null)
-        {
-            Console.WriteLine("Parsed " + results.Count + " files");
-
-            for (int i = 0; i < results.Count; i++)
-            {
-                var page = new Page
-                {
-                    Content = results[i].FileContent!,
-                    Template = File.ReadAllText(config.TemplatePath),
-                    MetaData = results[i].MetaData,
-                    SavePath = config.OutputPath,
-                };
-
-                page.PageVars.AddRange(results[i].YamlConfig.Select(x => new PageVar(x.Key, x.Value)));
-
-                pages.Add(page);
-            }
-
-            Console.WriteLine("Done loading in pages & variables.");
-        }
-    }
+    LogHelper.LogError("Couldn't locate the config file.");
+    return;
 }
 
-foreach (var page in pages)
+LogHelper.LogSuccess("Config file found.");
+var jsonContent = FileHelper.ReadFile(configFile);
+
+if (string.IsNullOrWhiteSpace(jsonContent))
 {
-    var builder = new StringBuilder(page.Template);
-
-    foreach (var pageVar in page.PageVars)
-    {
-        builder.Replace($"@#{pageVar.Name.ToUpper()}#@", pageVar.Value);
-    }
-
-    builder.Replace("@#CONTENT#@", page.Content);
-
-    page.GeneratedHTML = builder.ToString();
-
-    File.WriteAllText(page.SavePath + page.MetaData.FileName + ".html", page.GeneratedHTML);
+    LogHelper.LogError("Couldn't read the config file.");
+    return;
 }
 
-foreach (var config in configs.Where(c => !c.HasContent))
+LogHelper.LogSuccess("Successfully read the config file.");
+var config = ConfigHelper.ParseConfig(jsonContent);
+
+if (config is null)
 {
-    var paged = Helpers.PageList(pages, 5);
-
-    var indexWidgets = new StringBuilder(File.ReadAllText(config.TemplatePath));
-
-    foreach (var page in paged[0])
-    {
-        var widget = File.ReadAllText(config.WidgetPath!);
-
-        widget = widget
-            .Replace("@#IMAGESDIRECTORYPATH#@", config.ImagesDirectoryPath)
-            .Replace("@#COVER#@", page.PageVars.Find(x => x.Name == "cover")?.Value ?? "code.jpg")
-            .Replace("@#TITLE#@", page.PageVars.Find(x => x.Name == "title")?.Value ?? "No title")
-            .Replace("@#DESCRIPTION#@", page.PageVars.Find(x => x.Name == "description")?.Value ?? "No description")
-            .Replace("@#FILENAME#@", page.MetaData.FileName);
-
-        indexWidgets.Append(widget);
-    }
-
-    for (int i = 0; i < paged.Count; i++)
-    {
-        var builder = new StringBuilder(File.ReadAllText(config.TemplatePath));
-
-        var widgetList = new StringBuilder();
-
-        foreach (var page in paged[i])
-        {
-            var widget = File.ReadAllText(config.WidgetPath!);
-
-            widget = widget
-                        .Replace("@#IMAGESDIRECTORYPATH#@", config.ImagesDirectoryPath)
-                        .Replace("@#COVER#@", page.PageVars.Find(x => x.Name == "cover")?.Value ?? "code.jpg")
-                        .Replace("@#TITLE#@", page.PageVars.Find(x => x.Name == "title")?.Value ?? "No title")
-                        .Replace("@#DESCRIPTION#@", page.PageVars.Find(x => x.Name == "description")?.Value ?? "No description")
-                        .Replace("@#FILENAME#@", page.MetaData.FileName);
-
-            widgetList.Append(widget);
-        }
-
-        builder.Replace("@#WIDGETS#@", widgetList.ToString());
-
-        var paging = new StringBuilder(File.ReadAllText(config.PagingWidgetPath!));
-
-        paging.Replace("@#MAX#@", paged.Count.ToString());
-        paging.Replace("@#CURRENT#@", (i + 1).ToString());
-
-        if (i == paged.Count - 1)
-        {
-            paging.Replace("@#NEXT#@", (i + 1).ToString());
-        }
-        else
-        {
-            paging.Replace("@#NEXT#@", (i + 2).ToString());
-        }
-
-        if (i == 0)
-        {
-            paging.Replace("@#PREVIOUS#@", (i + 1).ToString());
-        }
-        else
-        {
-            paging.Replace("@#PREVIOUS#@", i.ToString());
-        }
-
-        builder.Replace("@#PAGING#@", paging.ToString());
-
-        var t = builder.ToString();
-        var b = widgetList.ToString();
-        var p = paging.ToString();
-
-        File.WriteAllText(config.OutputPath + $"{i + 1}.html", builder.ToString());
-    }
+    LogHelper.LogError("Couldn't parse the config file.");
+    return;
 }
 
-Console.WriteLine("Done building pages.");
+LogHelper.LogSuccess("Parsed the config file.");
+ConfigHelper.AdjustConfigPaths(config, configFile);
+
+var generator = MarkdownParser.GetParser();
+
+var results = generator
+                .UseFileOrDirectory(config.Article.InputPath)
+                .ReadContents()
+                .ParseMarkdown()
+                .ParseYaml()
+                .SaveFilesTo(config.Article.OutputPath)
+                .GetObjects();
+
+if (results == null)
+{
+    LogHelper.LogError("Failed to convert Markdown files to HTML.");
+    return;
+}
+
+LogHelper.LogSuccess("Read & converted Markdown files to HTML.");
+LogHelper.LogInfo($"Parsed {results.Count} files.");
+
+var articles = ArticleBuilder.BuildPages(config.Article, results).OrderByDescending(x => x.MetaData.CreateDate).ToList();
+ArticleBuilder.SavePages(articles);
+LogHelper.LogInfo("Loaded, created, and saved page objects.");
+
+var pagedArticles = ListHelper.PageList(articles, 5);
+PagingBuilder.BuildAndSavePages(config.Paging, pagedArticles);
+LogHelper.LogInfo("Built and saved paged pages.");
+
+HomeBuilder.BuildAndSavePages(config.Home, articles.OrderByDescending(x => x.MetaData.CreateDate).Take(5));
+LogHelper.LogInfo("Built home page.");
+
+LogHelper.LogInfo("Finished building site.");
 Console.ReadLine();
