@@ -46,6 +46,8 @@ internal static class ArticleBuilder
 
             builder.Replace("@#CONTENT#@", page.Content);
 
+            builder.Replace("@#FILENAME#@", page.MetaData.FileName);
+
             page.GeneratedHTML = builder.ToString();
 
             FileHelper.WriteFile(page.SavePath + page.MetaData.FileName + ".html", page.GeneratedHTML);
