@@ -1,7 +1,6 @@
-﻿using EKO.StaticPageBuilder.Helpers;
+﻿using EKO.ContentParser;
+using EKO.StaticPageBuilder.Helpers;
 using EKO.StaticPageBuilder.Models;
-using EKO.ContentParser;
-using System.Text;
 
 namespace EKO.StaticPageBuilder.Builders;
 

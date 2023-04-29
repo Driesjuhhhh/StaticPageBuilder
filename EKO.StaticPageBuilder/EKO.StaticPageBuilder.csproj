@@ -11,4 +11,8 @@
     <PackageReference Include="EKO.ContentParser" Version="1.0.0-2023-04-29T142732" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Using Include="System.Text" />
+  </ItemGroup>
+
 </Project>

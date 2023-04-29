@@ -6,7 +6,8 @@ internal static class PathHelper
 
     internal static bool IsPathValid(string path)
     {
-        if (string.IsNullOrWhiteSpace(path)) return false;
+        if (string.IsNullOrWhiteSpace(path))
+            return false;
 
         return path.IndexOfAny(Path.GetInvalidPathChars()) == -1;
     }
@@ -37,7 +38,8 @@ internal static class PathHelper
 
     internal static bool IsFileUseable(string path)
     {
-        if (!IsPathValid(path)) return false;
+        if (!IsPathValid(path))
+            return false;
 
         // Get the file name
         var fileName = Path.GetFileName(path);
