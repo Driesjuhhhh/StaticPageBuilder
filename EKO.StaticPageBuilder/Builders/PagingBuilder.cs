@@ -23,7 +23,7 @@ internal static class PagingBuilder
             builder.Replace("@#PAGING#@", BuildPaging(config, pagedArticles, i));
             LogHelper.LogSuccess("Added paging widget to the page.");
 
-            FileHelper.WriteFile(config.OutputPath + $"{i + 1}.html", builder.ToString());
+            FileHelper.WriteFile(config.OutputPath + $"{i + 1}/index.html", builder.ToString());
         }
     }
 

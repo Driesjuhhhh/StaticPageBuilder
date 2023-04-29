@@ -1,4 +1,4 @@
-﻿using EKO_ContentParser;
+﻿using EKO.ContentParser;
 
 namespace EKO.StaticPageBuilder
 {

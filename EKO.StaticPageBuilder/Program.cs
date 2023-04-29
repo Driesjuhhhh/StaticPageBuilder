@@ -1,6 +1,6 @@
 ﻿using EKO.StaticPageBuilder.Builders;
 using EKO.StaticPageBuilder.Helpers;
-using EKO_ContentParser;
+using EKO.ContentParser;
 
 var path = @"D:\Code\Sites\ekozf.github.io";
 
@@ -40,7 +40,6 @@ var results = generator
                 .ReadContents()
                 .ParseMarkdown()
                 .ParseYaml()
-                .SaveFilesTo(config.Article.OutputPath)
                 .GetObjects();
 
 if (results == null)

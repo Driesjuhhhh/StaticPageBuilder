@@ -36,6 +36,13 @@ internal static class FileHelper
     {
         try
         {
+            var fileInfo = new FileInfo(path);
+
+            if (!fileInfo.Directory!.Exists)
+            {
+                fileInfo.Directory.Create();
+            }
+
             File.WriteAllText(path, content);
         }
         catch (Exception ex)

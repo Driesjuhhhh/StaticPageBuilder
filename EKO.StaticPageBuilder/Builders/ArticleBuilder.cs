@@ -1,6 +1,6 @@
 ﻿using EKO.StaticPageBuilder.Helpers;
 using EKO.StaticPageBuilder.Models;
-using EKO_ContentParser;
+using EKO.ContentParser;
 using System.Text;
 
 namespace EKO.StaticPageBuilder.Builders;
@@ -50,7 +50,7 @@ internal static class ArticleBuilder
 
             page.GeneratedHTML = builder.ToString();
 
-            FileHelper.WriteFile(page.SavePath + page.MetaData.FileName + ".html", page.GeneratedHTML);
+            FileHelper.WriteFile(page.SavePath + page.MetaData.FileName + "/index.html", page.GeneratedHTML);
 
             LogHelper.LogInfo($"Page {page.MetaData.FileName}.html saved.");
         }
@@ -60,9 +60,14 @@ internal static class ArticleBuilder
     {
         DirectoryInfo di = new(outputPath);
 
-        foreach (FileInfo file in di.GetFiles())
+        foreach (var directory in di.GetDirectories())
         {
-            file.Delete();
+            foreach (var file in directory.GetFiles())
+            {
+                file.Delete();
+            }
+
+            directory.Delete();
         }
     }
 }
