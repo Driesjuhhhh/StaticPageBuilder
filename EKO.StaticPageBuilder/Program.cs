@@ -63,3 +63,9 @@ HomeBuilder.BuildAndSavePages(config.Home, articles.OrderByDescending(x => x.Met
 LogHelper.LogInfo("Built home page.");
 
 LogHelper.LogInfo("Finished building site.");
+
+LogHelper.LogInfo("Generating sitemap.");
+SitemapBuilder.GenerateSitemap(path);
+LogHelper.LogSuccess("Generated sitemap.");
+
+LogHelper.LogSuccess("Finished all tasks, quitting...");

@@ -48,6 +48,10 @@ internal static class ArticleBuilder
 
             builder.Replace("@#FILENAME#@", page.MetaData.FileName);
 
+            builder.Replace("@#DESCRIPTION#@", page.PageVars.Find(x => x.Name == "description")?.Value ?? "Blog Post");
+
+            builder.Replace("@#COVERIMG#@", page.PageVars.Find(x => x.Name == "cover")?.Value ?? "");
+
             page.GeneratedHTML = builder.ToString();
 
             FileHelper.WriteFile(page.SavePath + page.MetaData.FileName + "/index.html", page.GeneratedHTML);
