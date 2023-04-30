@@ -2,8 +2,10 @@
 using EKO.StaticPageBuilder.Builders;
 using EKO.StaticPageBuilder.Helpers;
 
+// Path to the folder where the config.json file is located.
 var path = @"D:\Code\Sites\ekozf.github.io";
 
+// Get the config file.
 var configFile = ConfigHelper.LocateConfigFile(path);
 
 if (string.IsNullOrWhiteSpace(configFile))
@@ -12,6 +14,7 @@ if (string.IsNullOrWhiteSpace(configFile))
     return;
 }
 
+// Read the config file.
 LogHelper.LogSuccess("Config file found.");
 var jsonContent = FileHelper.ReadFile(configFile);
 
@@ -21,6 +24,7 @@ if (string.IsNullOrWhiteSpace(jsonContent))
     return;
 }
 
+// Parse the config file.
 LogHelper.LogSuccess("Successfully read the config file.");
 var config = ConfigHelper.ParseConfig(jsonContent);
 
@@ -30,9 +34,11 @@ if (config is null)
     return;
 }
 
+// Adjust the config paths to the correct paths.
 LogHelper.LogSuccess("Parsed the config file.");
 ConfigHelper.AdjustConfigPaths(config, configFile);
 
+// Get the Markdown files and convert them to HTML.
 var generator = MarkdownParser.GetParser();
 
 var results = generator
@@ -42,6 +48,7 @@ var results = generator
                 .ParseYaml()
                 .GetObjects();
 
+// Check if the Markdown files were converted to HTML.
 if (results == null)
 {
     LogHelper.LogError("Failed to convert Markdown files to HTML.");
@@ -51,19 +58,23 @@ if (results == null)
 LogHelper.LogSuccess("Read & converted Markdown files to HTML.");
 LogHelper.LogInfo($"Parsed {results.Count} files.");
 
+// Build the article pages
 var articles = ArticleBuilder.BuildPages(config.Article, results).OrderByDescending(x => x.MetaData.CreateDate).ToList();
 ArticleBuilder.SavePages(articles);
 LogHelper.LogInfo("Loaded, created, and saved page objects.");
 
+// Build the multipage blog
 var pagedArticles = ListHelper.PageList(articles, 5);
 PagingBuilder.BuildAndSavePages(config.Paging, pagedArticles);
 LogHelper.LogInfo("Built and saved paged pages.");
 
+// Build the start page
 HomeBuilder.BuildAndSavePages(config.Home, articles.OrderByDescending(x => x.MetaData.CreateDate).Take(5));
 LogHelper.LogInfo("Built home page.");
 
 LogHelper.LogInfo("Finished building site.");
 
+// Generate the sitemap
 LogHelper.LogInfo("Generating sitemap.");
 SitemapBuilder.GenerateSitemap(path);
 LogHelper.LogSuccess("Generated sitemap.");
