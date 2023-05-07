@@ -22,9 +22,9 @@ internal static class SitemapBuilder
             var link = page.Replace(path, "").Replace('\\', '/').Replace("index.html", "");
 
             // Skip pages that are not articles.
-            if (!link.Contains("template", StringComparison.OrdinalIgnoreCase) && !link.Contains("node", StringComparison.Ordinal))
+            if (!link.Contains("template", StringComparison.OrdinalIgnoreCase) && !link.Contains("node", StringComparison.OrdinalIgnoreCase) && !link.Contains("widgets", StringComparison.OrdinalIgnoreCase))
             {
-                builder.Append("https://blog.emirkaan.be").AppendLine(link);
+                builder.Append("https://emirkaan.be").AppendLine(link);
             }
         }
 
