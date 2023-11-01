@@ -79,6 +79,17 @@ internal static class ConfigHelper
         FixArticlePaths(config.Article, filePath);
         FixPagingPaths(config.Paging, filePath);
         FixHomePaths(config.Home, filePath);
+        FixConnectFourPaths(config.ConnectFour, filePath);
+    }
+
+    private static void FixConnectFourPaths(ConnectFourConfig config, string path)
+    {
+        if (config != null)
+        {
+            FixBasePaths(config, path);
+
+            config.ImagesDirectoryPath = Path.Combine(path, PathHelper.FixPathName(config.ImagesDirectoryPath));
+        }
     }
 
     private static void FixBasePaths(BaseConfig config, string path)

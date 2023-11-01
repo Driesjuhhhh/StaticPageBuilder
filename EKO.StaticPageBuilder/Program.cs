@@ -72,6 +72,12 @@ LogHelper.LogInfo("Built and saved paged pages.");
 HomeBuilder.BuildAndSavePages(config.Home, articles.OrderByDescending(x => x.MetaData.CreateDate).Take(5));
 LogHelper.LogInfo("Built home page.");
 
+LogHelper.LogInfo("Building connect four game...");
+
+var connectFourPages = ConnectFourBuilder.ReadGamePages(config.ConnectFour);
+
+ConnectFourBuilder.BuildAndSavePages(config.ConnectFour, connectFourPages);
+
 LogHelper.LogInfo("Finished building site.");
 
 // Generate the sitemap
