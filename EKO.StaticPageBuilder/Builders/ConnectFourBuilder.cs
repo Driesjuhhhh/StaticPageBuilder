@@ -5,6 +5,8 @@ namespace EKO.StaticPageBuilder.Builders;
 
 internal static class ConnectFourBuilder
 {
+    private const string IMPORTS_HEADER = "# Imports";
+
     internal static IList<Page> ReadGamePages(ConnectFourConfig configToReadFrom)
     {
         // Get all files in the directory
@@ -69,18 +71,18 @@ internal static class ConnectFourBuilder
 
     private static string GetPageScripts(Page page)
     {
-        var index = page.Content.IndexOf("# Scripts");
+        var index = page.Content.IndexOf(IMPORTS_HEADER);
 
         if (index == -1)
         {
             return string.Empty;
         }
 
-        // Find '# Scripts'
+        // Find IMPORTS_HEADER
         var scripts = page.Content.AsSpan()[index..];
 
-        // Skip '# Scripts'
-        var pageScripts = scripts[10..];
+        // Skip IMPORTS_HEADER
+        var pageScripts = scripts[IMPORTS_HEADER.Length..];
 
         // Return the scripts
         return pageScripts.ToString();
@@ -100,12 +102,12 @@ internal static class ConnectFourBuilder
         // Skip first line
         var content = page.Content.AsSpan()[page.Content.IndexOf('\n')..];
 
-        // Index of '# Scripts'
-        var index = content.IndexOf("# Scripts");
+        // Index of IMPORTS_HEADER
+        var index = content.IndexOf(IMPORTS_HEADER);
 
         if (index != -1)
         {
-            // Skip '# Scripts'
+            // Skip IMPORTS_HEADER
             content = content[..index];
         }
 

@@ -25,6 +25,7 @@ internal static class FileHelper
                 DirectoryNotFoundException => "Directory in given path was not found.",
                 UnauthorizedAccessException => "Couldn't access the file. No permission.",
                 PathTooLongException => "Input path was too long.",
+                IOException => "File is already being used.",
                 _ => "Unknown error.",
             };
 
