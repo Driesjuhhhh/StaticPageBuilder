@@ -8,6 +8,11 @@ namespace EKO.StaticPageBuilder.Builders;
 internal static class SitemapBuilder
 {
     /// <summary>
+    /// Files to ignore when generating the sitemap.
+    /// </summary>
+    private static readonly string[] IGNORED_FILES = ["template", "node", "widgets", "/source/"];
+
+    /// <summary>
     /// Read all HTML files and generate a sitemap.
     /// </summary>
     /// <param name="path"></param>
@@ -21,14 +26,27 @@ internal static class SitemapBuilder
             // Get the link to the page.
             var link = page.Replace(path, "").Replace('\\', '/').Replace("index.html", "");
 
-            // Skip pages that are not articles.
-            if (!link.Contains("template", StringComparison.OrdinalIgnoreCase) && !link.Contains("node", StringComparison.OrdinalIgnoreCase) && !link.Contains("widgets", StringComparison.OrdinalIgnoreCase))
+            if (!ContainsOneOf(IGNORED_FILES, link))
             {
                 builder.Append("https://emirkaan.be").AppendLine(link);
+
             }
         }
 
         // Write the sitemap to a file.
         FileHelper.WriteFile(path + @"\sitemap.txt", builder.ToString());
+    }
+
+    private static bool ContainsOneOf(string[] array, string value)
+    {
+        foreach (var item in array)
+        {
+            if (value.Contains(item, StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
