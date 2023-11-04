@@ -1,5 +1,8 @@
 ﻿namespace EKO.StaticPageBuilder.Models;
 
+/// <summary>
+/// Config file for the page builder
+/// </summary>
 internal sealed class PageBuilderConfig
 {
     public HomeConfig Home { get; set; } = null!;

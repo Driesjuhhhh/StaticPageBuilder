@@ -4,8 +4,16 @@ using System.Text.Json;
 
 namespace EKO.StaticPageBuilder.Helpers;
 
+/// <summary>
+/// Helper class for the reading and modifying config.
+/// </summary>
 internal static class ConfigHelper
 {
+    /// <summary>
+    /// Read and parse the config file
+    /// </summary>
+    /// <param name="jsonContent">JSON of the config</param>
+    /// <returns><see cref="PageBuilderConfig"/> object that has been parsed</returns>
     internal static PageBuilderConfig? ParseConfig(string jsonContent)
     {
         try
@@ -33,6 +41,11 @@ internal static class ConfigHelper
         }
     }
 
+    /// <summary>
+    /// Search for the config file in the given path.
+    /// </summary>
+    /// <param name="path"></param>
+    /// <returns></returns>
     internal static string LocateConfigFile(string path)
     {
         if (!PathHelper.IsPathValid(path))
@@ -72,6 +85,11 @@ internal static class ConfigHelper
         }
     }
 
+    /// <summary>
+    /// Adjust all the paths in the config to the correct paths.
+    /// </summary>
+    /// <param name="config"></param>
+    /// <param name="path"></param>
     internal static void AdjustConfigPaths(PageBuilderConfig config, string path)
     {
         var filePath = PathHelper.GetBaseProjectDirectory(path);
@@ -82,6 +100,11 @@ internal static class ConfigHelper
         FixConnectFourPaths(config.ConnectFour, filePath);
     }
 
+    /// <summary>
+    /// Fix the paths in the ConnectFour config.
+    /// </summary>
+    /// <param name="config">Config object with required info and paths</param>
+    /// <param name="path">Base path to use</param>
     private static void FixConnectFourPaths(ConnectFourConfig config, string path)
     {
         if (config != null)
@@ -92,6 +115,11 @@ internal static class ConfigHelper
         }
     }
 
+    /// <summary>
+    /// Fix the paths in the BaseConfig.
+    /// </summary>
+    /// <param name="config">Config object with required info and paths</param>
+    /// <param name="path">Path to use</param>
     private static void FixBasePaths(BaseConfig config, string path)
     {
         if (config != null)
@@ -102,6 +130,11 @@ internal static class ConfigHelper
         }
     }
 
+    /// <summary>
+    /// Fix the paths in the ArticleConfig.
+    /// </summary>
+    /// <param name="config">Config object with required info and paths</param>
+    /// <param name="path">Base path to use</param>
     private static void FixArticlePaths(ArticleConfig config, string path)
     {
         if (config != null)
@@ -110,6 +143,11 @@ internal static class ConfigHelper
         }
     }
 
+    /// <summary>
+    /// Fix the paths in the PagingConfig.
+    /// </summary>
+    /// <param name="config">Config object with required info and paths</param>
+    /// <param name="path">Base path to use</param>
     private static void FixPagingPaths(PagingConfig config, string path)
     {
         if (config != null)
@@ -121,6 +159,11 @@ internal static class ConfigHelper
         }
     }
 
+    /// <summary>
+    /// Fix the paths in the HomeConfig.
+    /// </summary>
+    /// <param name="config">Config object with required info and paths</param>
+    /// <param name="path">Base path to use</param>
     private static void FixHomePaths(HomeConfig config, string path)
     {
         if (config != null)

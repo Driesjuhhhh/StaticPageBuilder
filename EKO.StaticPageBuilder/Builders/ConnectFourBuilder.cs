@@ -3,12 +3,20 @@ using EKO.StaticPageBuilder.Models;
 
 namespace EKO.StaticPageBuilder.Builders;
 
+/// <summary>
+/// Build the Connect Four pages.
+/// </summary>
 internal static class ConnectFourBuilder
 {
     private const string IMPORTS_HEADER = "# Imports";
     private const string ACTIVE_NAVIGATION = "@#ACTIVE-";
     private const string NAVIGATION_END = "#@";
 
+    /// <summary>
+    /// Read and parse the pages. Create the correct page variables.
+    /// </summary>
+    /// <param name="configToReadFrom"></param>
+    /// <returns></returns>
     internal static IList<Page> ReadGamePages(ConnectFourConfig configToReadFrom)
     {
         // Get all files in the directory
@@ -53,7 +61,7 @@ internal static class ConnectFourBuilder
 
             builder.Replace("@#TITLE#@", GetTitle(connectFourPages[i]));
 
-            builder.Replace("@#IMPORTS#@", GetPageScripts(connectFourPages[i]));
+            builder.Replace("@#IMPORTS#@", GetPageImports(connectFourPages[i]));
 
             AddActiveNavigation(template, connectFourPages[i], builder);
 
@@ -75,7 +83,12 @@ internal static class ConnectFourBuilder
         }
     }
 
-    private static string GetPageScripts(Page page)
+    /// <summary>
+    /// Get the imorts from the page.
+    /// </summary>
+    /// <param name="page">Page that will be parsed</param>
+    /// <returns>All required imports</returns>
+    private static string GetPageImports(Page page)
     {
         var index = page.Content.IndexOf(IMPORTS_HEADER);
 
@@ -94,6 +107,11 @@ internal static class ConnectFourBuilder
         return pageScripts.ToString();
     }
 
+    /// <summary>
+    /// Get the page title
+    /// </summary>
+    /// <param name="page">Page that will be used.</param>
+    /// <returns>Found title</returns>
     private static string GetTitle(Page page)
     {
         // Get the first line of the content
@@ -103,6 +121,11 @@ internal static class ConnectFourBuilder
         return firstLine[2..].ToString();
     }
 
+    /// <summary>
+    /// Skips the Page title and the imports and returns the rest of the page.
+    /// </summary>
+    /// <param name="page">Page to use</param>
+    /// <returns>Rest of the page</returns>
     private static string BuildWidgets(Page page)
     {
         // Skip first line
@@ -120,6 +143,12 @@ internal static class ConnectFourBuilder
         return content.ToString();
     }
 
+    /// <summary>
+    /// Add the active class to the current page.
+    /// </summary>
+    /// <param name="template">Template to add the active class on</param>
+    /// <param name="page">Page with the title</param>
+    /// <param name="builder">Builder that will be used to replace the active tag</param>
     private static void AddActiveNavigation(string template, Page page, StringBuilder builder)
     {
         // Get the page title, remove the last character (\r) and make it uppercase
