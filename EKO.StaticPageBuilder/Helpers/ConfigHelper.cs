@@ -98,6 +98,20 @@ internal static class ConfigHelper
         FixPagingPaths(config.Paging, filePath);
         FixHomePaths(config.Home, filePath);
         FixConnectFourPaths(config.ConnectFour, filePath);
+        FixShoppingListPaths(config.ShoppingList, filePath);
+    }
+
+    /// <summary>
+    /// Fix the paths in the ConnectFour config.
+    /// </summary>
+    /// <param name="config">Config object with required info and paths</param>
+    /// <param name="path">Base path to use</param>
+    private static void FixShoppingListPaths(ShoppingListConfig config, string path)
+    {
+        if (config != null)
+        {
+            FixBasePaths(config, path);
+        }
     }
 
     /// <summary>

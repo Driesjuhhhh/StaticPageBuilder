@@ -76,7 +76,20 @@ static void BuildSite(string path)
 
     var connectFourPages = ConnectFourBuilder.ReadGamePages(config.ConnectFour);
 
+    LogHelper.LogInfo("Read Connect Four Pages. Building pages.");
+
     ConnectFourBuilder.BuildAndSavePages(config.ConnectFour, connectFourPages);
+
+    LogHelper.LogInfo("Finished building connect four game.");
+
+    LogHelper.LogInfo("Building shopping list...");
+    ShoppingListBuilder.ReadShoppingPages(config.ShoppingList);
+
+    LogHelper.LogInfo("Read Shopping List Pages. Building pages.");
+
+    ShoppingListBuilder.BuildAndSavePages(config.ShoppingList, ShoppingListBuilder.ReadShoppingPages(config.ShoppingList));
+
+    LogHelper.LogInfo("Finished building shopping list.");
 
     LogHelper.LogInfo("Finished building site.");
 
