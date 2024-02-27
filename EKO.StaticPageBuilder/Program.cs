@@ -104,7 +104,7 @@ static void BuildSite(string path)
 }
 
 // Path to the folder where the config.json file is located.
-var path = @"D:\Code\Sites\ekozf.github.io";
+var path = @"C:\Users\dries\Desktop\repos\DRIESBIELEN";
 
 BuildSite(path);
 
